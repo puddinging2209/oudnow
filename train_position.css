@@ -1,0 +1,157 @@
+#station_container {
+    position: relative;
+}
+
+#reload_box {visibility: hidden;}
+
+#type_info {
+    font-size: 1.5em;
+    display: flex;
+}
+
+#type {
+    font-weight: bold;
+    margin-right: auto;
+    flex: 1;
+    text-align: center;
+    padding: 0 5px;
+}
+
+#number_info {
+    font-size: 1.2em;
+}
+
+#sta_name {
+    font-size: 2em;
+}
+
+#dep_table {
+    font-size: 1.2em;
+    display: flex;
+}
+
+#fastestfor_div {
+    display: flex;
+}
+
+header {
+    width: 100%; /* 幅いっぱいを指定 */
+    height: fit-content;
+    background: lightblue;
+    /* padding: 20px 50px; ヘッダーに上下左右それぞれ余白を指定 */
+    box-sizing: border-box; /* padding分を含んで幅を100%にするため */
+    position: fixed; /* ウィンドウを基準に画面に固定 */
+    top: 0; /* 上下の固定位置を上から0pxにする */
+    left: 0; /* 左右の固定位置を左から0pxにする */
+    /* display: flex; 中の要素を横並びにする */
+    align-items: center; /* 中の要素を上下中央に並べる */
+    z-index: 100;
+}
+
+.option_item {
+    display: flex;
+    font-size: 1.2em;
+}
+
+.box {
+    display: block;
+    /* width: 800px; */
+    height: 50px;
+    font-size: 30px;
+    line-height: 50px;
+    padding-left: 10px;
+    background: lightgray;
+    text-align: left;
+    margin-bottom: 100px;
+}
+
+.type_info {
+    position: absolute;
+    width: fit-content;
+    font-size: 15px;
+}
+
+table {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+td {
+    text-align-last: justify;
+    padding: 0 2px;
+}
+
+.gray {
+    color: white;
+    background-color: gray;
+}
+
+.times {
+    text-align-last: center;
+}
+
+.lefts {
+    text-align-last: right;
+}
+
+.line {
+    display: block;
+    width: 20px;
+    position: absolute;
+    background: navy;
+    box-sizing: border-box;
+    top: 0px;
+    /* left: 500px; */
+}
+
+.train_wrapper_down {
+    position: absolute;
+    /* left: 600px; */
+    width: fit-content;
+    height: 50px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.train_down {
+    display: block;
+    width: 50px;
+    height: 50px;
+    /* background: red; */
+    clip-path: polygon(50% 100%, 90% 60%, 90% 0, 10% 0, 10% 60%);
+}
+
+.rightlabel {
+    font-weight: bold;
+    width: fit-content;
+    height: 40px;
+    line-height: 20px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.train_wrapper_up {
+    position: absolute;
+    width: fit-content;
+    /* left: 300px; */
+    height: 50px;
+    display: flex;
+    align-items: flex-end;
+}
+
+.train_up {
+    display: block;
+    width: 50px;
+    height: 50px;
+    /* background: red; */
+    clip-path: polygon(50% 0, 90% 40%, 90% 100%, 10% 100%, 10% 40%);
+}
+
+.leftlabel {
+    font-weight: bold;
+    width: fit-content;
+    height: 40px;
+    line-height: 20px;
+    text-align: right;
+    vertical-align: bottom;
+}

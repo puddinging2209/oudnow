@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>列車位置情報</title>
+  <meta name="description" content="">
+
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+  <meta property="og:image:alt" content="">
+
+  <link href="train_position.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <meta name="theme-color" content="#fafafa">
+</head>
+
+<body id="body">
+  <header id="header">
+    <button type="button" id="option_button">option</button>
+
+    <dialog id="options">
+      <div id="option_dialogInputArea">
+        <div>
+          <div class="option_item">
+            <input class="form-check-input" type="checkbox" role="switch" id="showsecond">
+            <label for="showsecond">秒を表示する</label>
+          </div>
+          <div class="option_item">
+            <input class="form-check-input" type="checkbox" role="switch" id="leftsecond">
+            <label for="leftsecond">/d分後表記にする</label>
+          </div>
+          <div class="option_item">
+            <input type="number" id="howmany_show" name="tentacles" value="5" min="1"/>
+            <label>発車標の列車表示数</label>
+          </div>
+          <div class="option_item">
+            <input class="form-check-input" type="checkbox" role="switch" id="hijacksecond">
+            <label for="hijacksecond">時間を設定する：</label>
+            <input type="time" id="hijacked_time" name="tentacles" step="1"/>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <form name="myform">
+      <input name="myfile" type="file" />
+    </form>
+
+    <form>
+      <fieldset>
+        <div id="diagram_selecter" name="dia_form"></div>
+      </fieldset>
+    </form>
+    <div class="d-grid gap-2 col-6 mx-auto" id="reload_box">
+      <button class="btn btn-primary" type="button" id="reload_button">更新(<span id="nowtime"></span>現在)</button>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="auto_reload">
+        <label class="form-check-label" for="auto_reload"><input type="number" id="reload_cycle" name="tentacles" value="5" min="1"/>秒ごとに自動更新</label>
+      </div>
+    </div>
+  </header>
+  <div id="station_container"></div>
+
+  <script src="train_position.js" type="module" charset="Shift_JIS"></script>
+</body>
+
+</html>
