@@ -38,12 +38,10 @@ header {
     width: 100%; /* 幅いっぱいを指定 */
     height: fit-content;
     background: lightblue;
-    /* padding: 20px 50px; ヘッダーに上下左右それぞれ余白を指定 */
     box-sizing: border-box; /* padding分を含んで幅を100%にするため */
     position: fixed; /* ウィンドウを基準に画面に固定 */
     top: 0; /* 上下の固定位置を上から0pxにする */
     left: 0; /* 左右の固定位置を左から0pxにする */
-    /* display: flex; 中の要素を横並びにする */
     align-items: center; /* 中の要素を上下中央に並べる */
     z-index: 100;
 }
@@ -55,7 +53,6 @@ header {
 
 .box {
     display: block;
-    /* width: 800px; */
     height: 50px;
     font-size: 30px;
     line-height: 50px;
@@ -98,15 +95,12 @@ td {
     display: block;
     width: 20px;
     position: absolute;
-    background: navy;
     box-sizing: border-box;
     top: 0px;
-    /* left: 500px; */
 }
 
 .train_wrapper_down {
     position: absolute;
-    /* left: 600px; */
     width: fit-content;
     height: 50px;
     display: flex;
@@ -117,7 +111,6 @@ td {
     display: block;
     width: 50px;
     height: 50px;
-    /* background: red; */
     clip-path: polygon(50% 100%, 90% 60%, 90% 0, 10% 0, 10% 60%);
 }
 
@@ -133,7 +126,6 @@ td {
 .train_wrapper_up {
     position: absolute;
     width: fit-content;
-    /* left: 300px; */
     height: 50px;
     display: flex;
     align-items: flex-end;
@@ -143,7 +135,6 @@ td {
     display: block;
     width: 50px;
     height: 50px;
-    /* background: red; */
     clip-path: polygon(50% 0, 90% 40%, 90% 100%, 10% 100%, 10% 40%);
 }
 

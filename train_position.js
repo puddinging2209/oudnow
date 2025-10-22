@@ -25,6 +25,7 @@ let dep_list;
 let dep_table;
 let hijacksecond = false
 let leftsecond = false
+let linecolor = "navy"
 
 const container = document.getElementById("station_container")
 const body = document.getElementById("body")
@@ -1164,12 +1165,6 @@ function set_stations (diagram) {
         })
     }
 
-    const line = document.createElement("div")
-    line.className = "line"
-    line.style.height = `${150 * (station_list.length - 1) + 50}px`
-    line.style.left = `${window.innerWidth / 2 - 10}px`
-    container.appendChild(line)
-
     for(let i = 0; i < diagram.railway.diagrams.length; i++) {
 
         const diaselecter_input = document.createElement("input")
@@ -1192,6 +1187,14 @@ function set_stations (diagram) {
     }
 }
 
+function generateline () {
+    const line = document.createElement("div")
+    line.className = "line"
+    line.style.height = `${150 * (station_list.length - 1) + 50}px`
+    line.style.left = `${window.innerWidth / 2 - 10}px`
+    line.style.background = linecolor
+    container.appendChild(line)
+}
 
 form.myfile.addEventListener( "change", function(e) {
 
@@ -1220,6 +1223,7 @@ form.myfile.addEventListener( "change", function(e) {
             console.log(diagram)
             console.log(JSON.stringify(diagram))
             set_stations(diagram)
+            generateline()
             set_train_position(diagram)
 
         })
@@ -1289,6 +1293,9 @@ option_dialog.addEventListener('click', (event) => {
         hijacksecond = document.getElementById("hijacksecond").checked
         leftsecond = document.getElementById("leftsecond").checked
         const input_time = document.getElementById("hijacked_time")
+        linecolor = document.getElementById("linecolor").value
+        generateline()
+
         if (hijacksecond) {
             if (input_time.value) {
                 nowsecond = time_reverser(input_time.value)
