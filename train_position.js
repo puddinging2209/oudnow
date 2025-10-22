@@ -1,8 +1,6 @@
-// import { json } from 'stream/consumers';
 import DiagramParser, { OuterTerminal, Train, TrainList } from './DiagramParser.js';
 
 import { Color } from './Util.js';
-// import { stringify } from 'querystring';
 
 let diagram_text;
 let station_list = []
@@ -412,9 +410,6 @@ function showdialog (pushed_train) {
 
     clearInterval(reload_loop)
 
-    // let data_changed = false
-    // let id = String(trainid)
-    // let pushed_train = nowtrains[id[0]][id.slice(1,id.length)]
     console.log(pushed_train)
 
     let pushed_times = []
@@ -967,9 +962,6 @@ function set_train_position (diagram) {
                                 }
                             }
                         }
-                        // if (!isEqualArray(nowtrain[i].timetable._data, first[0].timetable._data)) {
-                        //     first_depart = false
-                        // }
 
                     break;
                 }
