@@ -929,7 +929,7 @@ function set_train_position (diagram) {
                                     let start_passing = train.timetable.firstStationIndex
                                     let end_passing = train.timetable.terminalStationIndex
                                     for (let k = via_stations[currentIndex]; k >= train.timetable.firstStationIndex; k--) {
-                                        if (train.timetable._data[k].stopType === 1) {
+                                        if (train.timetable._data[k]?.stopType === 1) {
                                             start_passing = k
                                             break;
                                         }
@@ -1135,9 +1135,9 @@ function set_stations (diagram) {
         type_info.className = "type_info"
         for(let j = 0; j < stoptype_list[i].length; j++) {
             if(stoptype_list[i][j]) {
-                type_info.textContent = type_info.textContent + diagram.railway.trainTypes[j].name + " "
+                type_info.textContent += diagram.railway.trainTypes[j].name + " "
             } else if(half_stoptype_list[i][j]) {
-                type_info.textContent = type_info.textContent + "(" + diagram.railway.trainTypes[j].name + ") "
+                type_info.textContent += "(" + diagram.railway.trainTypes[j].name + ") "
             }
         }
         type_info.style.top = `${150 * (i) + 50}px`
