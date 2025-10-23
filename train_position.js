@@ -1186,27 +1186,51 @@ function generateline () {
 
 form.myfile.addEventListener( "change", function(e) {
 
-    let result = e.target.files[0];
+    const file = e.target.files[0];
+    if (!file) return;
 
-    //FileReaderのインスタンスを作成する
-    let reader = new FileReader();
+    // まずバイナリで読み込み、UTF-8 / Shift_JIS 両方で先頭行をチェックする
+    const reader = new FileReader();
+    reader.addEventListener('load', function(ev) {
+        const arrayBuffer = ev.target.result;
+        const u8 = new Uint8Array(arrayBuffer);
 
-    const filename = result.name || ""
-    const dotIndex = filename.lastIndexOf('.')
-    const extension = dotIndex === -1 ? '' : filename.slice(dotIndex + 1).toLowerCase()
-  
-    //読み込んだファイルの中身を取得する
-    if (extension === "oud") {
-        reader.readAsText(result, "Shift_JIS");
-    } else if (extension === "oud2") {
-        reader.readAsText(result, "utf-8");
-    }
-  
-    //ファイルの中身を取得後に処理を行う
-    reader.addEventListener( 'load', function() {
-    
-        diagram_text = reader.result
+        let utf8Text = "";
+        let sjisText = "";
+        // TextDecoder が使える前提（モダンブラウザ）。無ければフォールバックで拡張子判定に頼る。
+        try { utf8Text = new TextDecoder('utf-8').decode(u8); } catch(e) { utf8Text = ""; }
+        try { sjisText = new TextDecoder('shift_jis').decode(u8); } catch(e) { sjisText = ""; }
 
+        const firstLineUtf8 = (utf8Text.split(/\r\n|\n/)[0] || "").trim();
+        const firstLineSjis = (sjisText.split(/\r\n|\n/)[0] || "").trim();
+
+        let useEncoding = null;
+        // 優先判定：明示的に OuDiaSecond があれば UTF-8
+        if (/^FileType=OuDiaSecond/i.test(firstLineUtf8) || /^FileType=OuDiaSecond/i.test(firstLineSjis)) {
+            useEncoding = 'utf-8';
+        } else if (/^FileType=OuDia/i.test(firstLineSjis) || /^FileType=OuDia/i.test(firstLineUtf8)) {
+            // OuDia (Second なし) は Shift_JIS
+            useEncoding = 'shift_jis';
+        } else {
+            // 判別できなければ拡張子でフォールバック（既存の挙動に合わせる）
+            const filename = file.name || "";
+            const dotIndex = filename.lastIndexOf('.');
+            const ext = dotIndex === -1 ? '' : filename.slice(dotIndex + 1).toLowerCase();
+            if (ext === 'oud') {
+                useEncoding = 'shift_jis';
+            } else {
+                useEncoding = 'utf-8';
+            }
+        }
+
+        // 最終的なテキストを確定（既にデコード済みの文字列を使う）
+        if (useEncoding === 'shift_jis') {
+            diagram_text = sjisText || utf8Text; // 万一 shift_jis デコード失敗なら utf8 を代用
+        } else {
+            diagram_text = utf8Text || sjisText;
+        }
+
+        // ここから既存の処理を続ける（既存コードの reader.load 内の処理をそのまま置いてください）
         const parser = new DiagramParser();
         parser
         .parse(diagram_text)
@@ -1225,7 +1249,10 @@ form.myfile.addEventListener( "change", function(e) {
         })
         .catch(err => console.error('パースできなかったよ(ToT).', err));
 
-    })
+    });
+
+    // ArrayBuffer として読み込む（バイト列を両方のエンコーディングで試すため）
+    reader.readAsArrayBuffer(file);
 
 })
 
