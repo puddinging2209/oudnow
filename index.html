@@ -20,7 +20,13 @@
 
 <body id="body">
   <header id="header">
-    <button type="button" id="option_button">option</button>
+    <div style="display: flex;">
+      <button type="button" id="option_button">option</button>
+
+      <form name="myform">
+        <input name="myfile" type="file" id="input" />
+      </form>
+    </div>
 
     <dialog id="options">
       <div id="option_dialogInputArea">
@@ -49,10 +55,6 @@
         </div>
       </div>
     </dialog>
-
-    <form name="myform">
-      <input name="myfile" type="file" id="input" />
-    </form>
 
     <form>
       <fieldset>
