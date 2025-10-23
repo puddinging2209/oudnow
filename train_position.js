@@ -935,7 +935,7 @@ function set_train_position (diagram) {
                                         }
                                     }
                                     for (let k = via_stations[currentIndex]; k <= train.timetable.terminalStationIndex; k++) {
-                                        if (train.timetable._data[k].stopType === 1) {
+                                        if (train.timetable._data[k]?.stopType === 1) {
                                             end_passing = k
                                             break;
                                         }
