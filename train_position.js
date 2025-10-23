@@ -67,12 +67,10 @@ function timeconverter(seconds, showsecond = show_second, showleft = leftsecond)
                 if (showsecond) {
                     if (left_h !== 0) {
                         return left_h + "時間" + left_m + "分" + left_s + "秒後"
+                    } else if (left_m !== 0) {
+                        return left_m + "分" + left_s + "秒後"
                     } else {
-                        if (left_m !== 0) {
-                            return left_m + "分" + left_s + "秒後"
-                        } else {
-                            return left_s + "秒後"
-                        }
+                        return left_s + "秒後"
                     }
                 } else {
                     if (left_h !== 0) {
@@ -85,12 +83,10 @@ function timeconverter(seconds, showsecond = show_second, showleft = leftsecond)
                 if (showsecond) {
                     if (left_h !== 0) {
                         return left_h + "時間" + left_m + "分" + left_s + "秒前"
+                    } else if (left_m !== 0) {
+                        return left_m + "分" + left_s + "秒前"
                     } else {
-                        if (left_m !== 0) {
-                            return left_m + "分" + left_s + "秒前"
-                        } else {
-                            return left_s + "秒前"
-                        }
+                        return left_s + "秒前"
                     }
                 } else {
                     if (left_h !== 0) {
@@ -466,12 +462,10 @@ function showdialog (pushed_train) {
 
         info_type.appendChild(type)
         info_type.appendChild(terminal)
+    } else if (pushed_train.count === "") {
+        info_type.textContent = `${pushed_train.name} ${pushed_train.terminal}行`
     } else {
-        if (pushed_train.count === "") {
-            info_type.textContent = `${pushed_train.name} ${pushed_train.terminal}行`
-        } else {
-            info_type.textContent = `${pushed_train.name} ${pushed_train.count}号 ${pushed_train.terminal}行`
-        }
+        info_type.textContent = `${pushed_train.name} ${pushed_train.count}号 ${pushed_train.terminal}行`
     }
     train_info_div.appendChild(info_type)
     dialog.appendChild(train_info_div)
@@ -776,10 +770,8 @@ function set_train_position (diagram) {
         let s = String(DD.getSeconds());
         while (s.length < 2) {s = "0" + s}
         nowsecond = Number(h) * 3600 + Number(m) * 60 + Number(s)
-    } else {
-        if (loop) {
-            nowsecond += loop_cycle
-        }
+    } else if (loop) {
+        nowsecond += loop_cycle
     }
 
     console.log(timeconverter(nowsecond, true))
@@ -933,32 +925,29 @@ function set_train_position (diagram) {
                                         first_depart = false
                                         waitcount++
                                     }
-                                } else {
+                                } else if(train.timetable._data[via_stations[currentIndex]].stopType === 2) {
+                                    let start_passing = train.timetable.firstStationIndex
+                                    let end_passing = train.timetable.terminalStationIndex
+                                    for (let k = via_stations[currentIndex]; k >= train.timetable.firstStationIndex; k--) {
+                                        if (train.timetable._data[k].stopType === 1) {
+                                            start_passing = k
+                                            break;
+                                        }
+                                    }
+                                    for (let k = via_stations[currentIndex]; k <= train.timetable.terminalStationIndex; k++) {
+                                        if (train.timetable._data[k].stopType === 1) {
+                                            end_passing = k
+                                            break;
+                                        }
+                                    }
+                                    let pass_length = end_passing - start_passing
+                                    let current_late = (via_stations[currentIndex] - start_passing) / pass_length
+                                    let moving_time = (train.timetable._data[end_passing].arrival ?? train.timetable._data[end_passing].departure) - (train.timetable._data[start_passing].departure ?? train.timetable._data[start_passing].arrival)
 
-                                    if(train.timetable._data[via_stations[currentIndex]].stopType === 2) {
-                                        let start_passing = train.timetable.firstStationIndex
-                                        let end_passing = train.timetable.terminalStationIndex
-                                        for (let k = via_stations[currentIndex]; k >= train.timetable.firstStationIndex; k--) {
-                                            if (train.timetable._data[k].stopType === 1) {
-                                                start_passing = k
-                                                break;
-                                            }
-                                        }
-                                        for (let k = via_stations[currentIndex]; k <= train.timetable.terminalStationIndex; k++) {
-                                            if (train.timetable._data[k].stopType === 1) {
-                                                end_passing = k
-                                                break;
-                                            }
-                                        }
-                                        let pass_length = end_passing - start_passing
-                                        let current_late = (via_stations[currentIndex] - start_passing) / pass_length
-                                        let moving_time = (train.timetable._data[end_passing].arrival ?? train.timetable._data[end_passing].departure) - (train.timetable._data[start_passing].departure ?? train.timetable._data[start_passing].arrival)
-
-                                        time = (train.timetable._data[start_passing].departure ?? train.timetable._data[start_passing].arrival) + moving_time * current_late
-                                        if (time >= adjust_time(nowtrain[i].timetable._data[via_stations[currentIndex]].arrival) && adjust_time(nowtrain[i].timetable._data[via_stations[currentIndex]].departure) > time) {
-                                            first_depart = false
-                                            waitcount++
-                                        }
+                                    time = (train.timetable._data[start_passing].departure ?? train.timetable._data[start_passing].arrival) + moving_time * current_late
+                                    if (time >= adjust_time(nowtrain[i].timetable._data[via_stations[currentIndex]].arrival) && adjust_time(nowtrain[i].timetable._data[via_stations[currentIndex]].departure) > time) {
+                                        first_depart = false
+                                        waitcount++
                                     }
                                 }
                             }
@@ -1096,9 +1085,6 @@ function set_stations (diagram) {
         }
     }
 
-    for (let i = 0; i < diagram.railway.trainTypes.length; i++) {
-    }
-
     for(let d = 0; d < 2; d++) {
         for(let i = 0; i < diagram.railway.diagrams[which_dia].trains[d].length; i++) {
             const thistrain = diagram.railway.diagrams[which_dia].trains[d][i]
@@ -1150,10 +1136,8 @@ function set_stations (diagram) {
         for(let j = 0; j < stoptype_list[i].length; j++) {
             if(stoptype_list[i][j]) {
                 type_info.textContent = type_info.textContent + diagram.railway.trainTypes[j].name + " "
-            } else {
-                if(half_stoptype_list[i][j]) {
-                    type_info.textContent = type_info.textContent + "(" + diagram.railway.trainTypes[j].name + ") "
-                }
+            } else if(half_stoptype_list[i][j]) {
+                type_info.textContent = type_info.textContent + "(" + diagram.railway.trainTypes[j].name + ") "
             }
         }
         type_info.style.top = `${150 * (i) + 50}px`
@@ -1188,8 +1172,12 @@ function set_stations (diagram) {
 }
 
 function generateline () {
+    const oldline = document.getElementById("line")
+    oldline.remove()
+
     const line = document.createElement("div")
     line.className = "line"
+    line.id = "line"
     line.style.height = `${150 * (station_list.length - 1) + 50}px`
     line.style.left = `${window.innerWidth / 2 - 10}px`
     line.style.background = linecolor
@@ -1202,9 +1190,17 @@ form.myfile.addEventListener( "change", function(e) {
 
     //FileReaderのインスタンスを作成する
     let reader = new FileReader();
+
+    const filename = result.name
+    const DotIndex = fileName.lastIndexOf('.')
+    const extension = lastDotIndex === -1 ? '' : fileName.slice(DotIndex + 1)
   
     //読み込んだファイルの中身を取得する
-    reader.readAsText( result , "Shift_JIS");
+    if (extension == "oud") {
+        reader.readAsText( result , "Shift_JIS");
+    } else if (extension == "oud2") {
+        reader.readAsText( result , "utf-8");
+    }
   
     //ファイルの中身を取得後に処理を行う
     reader.addEventListener( 'load', function() {
