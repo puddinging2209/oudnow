@@ -2,7 +2,9 @@
     position: relative;
 }
 
-#reload_box {visibility: hidden;}
+#reload_box {
+    visibility: hidden;
+}
 
 #type_info {
     font-size: 1.5em;
@@ -53,13 +55,13 @@ header {
 
 .box {
     display: block;
-    height: 50px;
-    font-size: 30px;
-    line-height: 50px;
-    padding-left: 10px;
+    height: 2.5rem;
+    font-size: 2em;
+    line-height: 2.5rem;
+    padding-left: 0.5rem;
     background: lightgray;
     text-align: left;
-    margin-bottom: 100px;
+    margin-bottom: 10rem;
 }
 
 .type_info {
@@ -93,7 +95,7 @@ td {
 
 .line {
     display: block;
-    width: 20px;
+    width: 1rem;
     position: absolute;
     box-sizing: border-box;
     top: 0px;

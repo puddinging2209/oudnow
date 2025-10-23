@@ -25,7 +25,7 @@ let dep_list;
 let dep_table;
 let hijacksecond = false
 let leftsecond = false
-let linecolor = "navy"
+let linecolor = "#3949ab"
 
 const container = document.getElementById("station_container")
 const body = document.getElementById("body")
