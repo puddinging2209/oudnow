@@ -1172,7 +1172,7 @@ function set_stations (diagram) {
 }
 
 function generateline () {
-    const oldline = document.getElementById("line")
+    const oldline = document.getElementById("line") || null
     if (oldline) {
         oldline.remove()
     }
