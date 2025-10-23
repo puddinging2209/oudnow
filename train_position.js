@@ -1173,8 +1173,9 @@ function set_stations (diagram) {
 
 function generateline () {
     const oldline = document.getElementById("line")
-    oldline.remove()
-
+    if (oldline) {
+        oldline.remove()
+    }
     const line = document.createElement("div")
     line.className = "line"
     line.id = "line"
