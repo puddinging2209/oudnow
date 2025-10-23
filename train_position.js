@@ -1191,15 +1191,15 @@ form.myfile.addEventListener( "change", function(e) {
     //FileReaderのインスタンスを作成する
     let reader = new FileReader();
 
-    const filename = result.name
-    const DotIndex = filename.lastIndexOf('.')
-    const extension = lastDotIndex === -1 ? '' : filename.slice(DotIndex + 1)
+    const filename = result.name || ""
+    const dotIndex = filename.lastIndexOf('.')
+    const extension = dotIndex === -1 ? '' : filename.slice(dotIndex + 1).toLowerCase()
   
     //読み込んだファイルの中身を取得する
-    if (extension == "oud") {
-        reader.readAsText( result , "Shift_JIS");
-    } else if (extension == "oud2") {
-        reader.readAsText( result , "utf-8");
+    if (extension === "oud") {
+        reader.readAsText(result, "Shift_JIS");
+    } else if (extension === "oud2") {
+        reader.readAsText(result, "utf-8");
     }
   
     //ファイルの中身を取得後に処理を行う
