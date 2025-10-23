@@ -55,13 +55,13 @@ header {
 
 .box {
     display: block;
-    height: 2.5rem;
-    font-size: 2em;
-    line-height: 2.5rem;
-    padding-left: 0.5rem;
+    height: 50px;
+    font-size: 30px;
+    line-height: 50px;
+    padding-left: 10px;
     background: lightgray;
     text-align: left;
-    margin-bottom: 10rem;
+    margin-bottom: 10px;
 }
 
 .type_info {
