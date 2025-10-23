@@ -36,6 +36,17 @@
     display: flex;
 }
 
+#optionbutton {
+    font-size: 1.2em;
+    margin-left: auto;
+    padding: 0 5px;
+}
+
+#input {
+    margin: 5px 0;
+    padding: 0 5px;
+}
+
 header {
     width: 100%; /* 幅いっぱいを指定 */
     height: fit-content;

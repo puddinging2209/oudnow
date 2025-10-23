@@ -1304,6 +1304,8 @@ option_button.addEventListener("click", function (event) {
 
     document.documentElement.style.overflow = "hidden"
 
+    document.getElementById("hijacked_time").value = timeconverter(nowsecond, true, false)
+
 })
 
 // optionsを閉じたとき
