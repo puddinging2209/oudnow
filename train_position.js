@@ -1192,8 +1192,8 @@ form.myfile.addEventListener( "change", function(e) {
     let reader = new FileReader();
 
     const filename = result.name
-    const DotIndex = fileName.lastIndexOf('.')
-    const extension = lastDotIndex === -1 ? '' : fileName.slice(DotIndex + 1)
+    const DotIndex = filename.lastIndexOf('.')
+    const extension = lastDotIndex === -1 ? '' : filename.slice(DotIndex + 1)
   
     //読み込んだファイルの中身を取得する
     if (extension == "oud") {
