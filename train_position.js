@@ -898,7 +898,7 @@ function set_train_position (diagram) {
                         var ratio = moving_curve(elapsed / total)
 
                         currentIndex = via_stations[currentIndex + Math.floor(ratio * pass_count)]
-                        ratio = (ratio - Math.floor(ratio * pass_count) / pass_count) * pass_count
+                        ratio = ratio * pass_count - Math.floor(ratio * pass_count)
 
                         var baseTop = 150 * currentIndex;
 
