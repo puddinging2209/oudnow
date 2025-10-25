@@ -25,6 +25,7 @@ let dep_list;
 let dep_table;
 let hijacksecond = false
 let leftsecond = false
+let speedrate = 1
 let linecolor = "#3949ab"
 
 const container = document.getElementById("station_container")
@@ -128,29 +129,60 @@ function time_reverser(time_string) {
 function adjust_time (time) {
     if(time < parsed_diagram.railway.startTime) {
         return time + 86400
-    } else {
-        return time
+    } else if (time >= 86400 + parsed_diagram.railway.startTime) {
+        return time - (86400 * Math.floor((time - parsed_diagram.railway.startTime) / 86400))
     }
+    return time
 }
 
-function moving_curve (late) {
-    switch (true) {
+function moving_curve (late, type = "1-1") {
 
-        case late <= 0:
-            return 0;
+    if (!(0 <= late && late <= 1)) {
+        return late
+    }
 
-        case 0 < late && late <= (2 - Math.sqrt(3)) / 4:
-            return 8 * (late ** 2)
+    switch (type) {
+        case "1-1":
+            switch (true) {
 
-        case (2 - Math.sqrt(3)) / 4 < late && late <= (2 + Math.sqrt(3)) / 4:
-            return (8 - 4 * Math.sqrt(3)) * late - (7 - 4 * Math.sqrt(3)) / 2
+                case late <= (2 - Math.sqrt(3)) / 4:
+                    return 8 * (late ** 2)
 
-        case (2 + Math.sqrt(3)) / 4 < late && late <= 1:
-            return -8 * ((late - 1) ** 2) + 1;
+                case (2 - Math.sqrt(3)) / 4 < late && late <= (2 + Math.sqrt(3)) / 4:
+                    return (8 - 4 * Math.sqrt(3)) * late - (7 - 4 * Math.sqrt(3)) / 2
 
-        case 1 < late:
-            return 1
+                case (2 + Math.sqrt(3)) / 4 < late:
+                    return -8 * ((late - 1) ** 2) + 1
+                    
+            }
+        break;
 
+        case "1-2":
+            switch (true) {
+
+                case late <= 1 - Math.sqrt(14) / 4:
+                    return 8 * (late ** 2)
+
+                case 1 - Math.sqrt(14) / 4 < late:
+                    return late * (16 - 4 * Math.sqrt(14)) - 15 + 4 * Math.sqrt(14)
+                    
+            }
+        break;
+
+        case "2-1":
+            switch (true) {
+
+                case late <= Math.sqrt(14) / 4:
+                    return late * (16 - 4 * Math.sqrt(14))
+
+                case Math.sqrt(14) / 4 < late:
+                    return -8 * ((late - 1) ** 2) + 1
+                    
+            }
+        break;
+
+        case "2-2":
+            return late
     }
 }
 
@@ -381,7 +413,7 @@ function create_depart_table (station_id = showing_sta) {
             // 表の行を作成
             const row = document.createElement("tr");
             const endday = document.createElement("td")
-            endday.textContent = "☆☆☆日本は終了しました☆☆☆"
+            endday.textContent = "☆☆☆本日は終了しました☆☆☆"
             endday.classList.add("times")
             endday.colSpan = `${col}`
             row.appendChild(endday)
@@ -420,14 +452,13 @@ function showdialog (pushed_train) {
             ) {
                 let check_time = pushed_train.timetable._data[i].arrival ?? pushed_train.timetable._data[i].departure
                 if(
-                    adjust_time(check_time) > adjust_time(nowsecond) && 
                     ((pushed_train.direction === 0 && station_list[i] !== station_list[stop_stations.at(-1)]) || 
                     (pushed_train.direction === 1 && station_list[station_list.length - 1 - i] !== station_list[station_list.length - 1 - stop_stations.at(-1)]))
                 ) {
-                    if (wherenow == null) {wherenow = pushed_times.length}
+                    pushed_times.push(check_time)
+                    stop_stations.push(i)
+                    if (adjust_time(nowsecond) < adjust_time(check_time) && wherenow == null) {wherenow = pushed_times.length - 1}
                 }
-                pushed_times.push(check_time)
-                stop_stations.push(i)
             }
         }
     }
@@ -565,6 +596,7 @@ function showdialog (pushed_train) {
             const already_depart = document.createElement("td")
             already_depart.textContent = "-----<発車済み>-----"
             already_depart.classList.add("times")
+            already_depart.classList.add("gray")
             already_depart.colSpan = `${col}`
             row.appendChild(already_depart)
             tblBody.appendChild(row)
@@ -771,7 +803,7 @@ function set_train_position (diagram) {
         while (s.length < 2) {s = "0" + s}
         nowsecond = Number(h) * 3600 + Number(m) * 60 + Number(s)
     } else if (loop) {
-        nowsecond += loop_cycle
+        nowsecond += loop_cycle * speedrate
     }
 
     console.log(timeconverter(nowsecond, true))
@@ -890,12 +922,14 @@ function set_train_position (diagram) {
                     case false:
 
                         var depTime = timetable._data[via_stations[currentIndex]].departure;
+                        const deptype = timetable._data[via_stations[currentIndex]].stopType
                         var arrTime = timetable._data[via_stations[currentIndex + pass_count]].arrival ?? timetable._data[via_stations[currentIndex + pass_count]].departure
+                        const arrtype = timetable._data[via_stations[currentIndex + pass_count]].stopType
 
                         var elapsed = nowsecond - depTime;
                         var total = arrTime - depTime;
 
-                        var ratio = moving_curve(elapsed / total)
+                        var ratio = moving_curve(elapsed / total, `${deptype}-${arrtype}`)
 
                         currentIndex = via_stations[currentIndex + Math.floor(ratio * pass_count)]
                         ratio = ratio * pass_count - Math.floor(ratio * pass_count)
@@ -1242,7 +1276,6 @@ form.myfile.addEventListener( "change", function(e) {
             train_types = diagram.railway.trainTypes
             showing_dep = false
             console.log(diagram)
-            console.log(JSON.stringify(diagram))
             set_stations(diagram)
             generateline()
             set_train_position(diagram)
@@ -1304,7 +1337,7 @@ option_button.addEventListener("click", function (event) {
 
     document.documentElement.style.overflow = "hidden"
 
-    document.getElementById("hijacked_time").value = timeconverter(nowsecond, true, false)
+    document.getElementById("hijacked_time").value = timeconverter(nowsecond, true, false).replace("'", ":")
 
 })
 
@@ -1315,22 +1348,34 @@ option_dialog.addEventListener('click', (event) => {
         document.documentElement.style.overflow = "visible"
 
         show_second = document.getElementById("showsecond").checked
-        howmany_show = document.getElementById("howmany_show").value
-        hijacksecond = document.getElementById("hijacksecond").checked
-        leftsecond = document.getElementById("leftsecond").checked
-        const input_time = document.getElementById("hijacked_time")
-        linecolor = document.getElementById("linecolor").value
-        generateline()
 
+        leftsecond = document.getElementById("leftsecond").checked
+
+        howmany_show = document.getElementById("howmany_show").value
+
+        hijacksecond = document.getElementById("hijacksecond").checked
+        const input_time = document.getElementById("hijacked_time").value
         if (hijacksecond) {
-            if (input_time.value) {
-                nowsecond = time_reverser(input_time.value)
-                console.log(input_time.value, time_reverser(input_time.value))
+            if (input_time) {
+                nowsecond = time_reverser(input_time)
             } else {
                 document.getElementById("hijacksecond").checked = false
                 alert("値を入力してください")
             }
         }
+
+        const inputspeed = document.getElementById("speed_rate").value
+        if (inputspeed) {
+            speedrate = inputspeed
+        } else {
+            speedrate = 1
+            document.getElementById("speed_rate").value = 1
+            alert("値を入力してください")
+        }
+
+        linecolor = document.getElementById("linecolor").value
+        generateline()
+
         if(loop) {
             set_train_position(parsed_diagram)
             reload_loop = setInterval(() => {
