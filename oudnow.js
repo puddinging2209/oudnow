@@ -934,8 +934,6 @@ function set_train_position (diagram) {
                         currentIndex = via_stations[currentIndex + Math.floor(ratio * pass_count)]
                         ratio = ratio * pass_count - Math.floor(ratio * pass_count)
 
-                        var baseTop = 150 * currentIndex;
-
                         topPx = (currentIndex + ratio) * 150
                     break;
 
@@ -945,8 +943,7 @@ function set_train_position (diagram) {
                         topPx = baseTop
 
                         // 先発かどうか調べる
-                        for(let j = 0; j < diagram.railway.diagrams[which_dia].trains[d].length; j++) {
-                            const train = diagram.railway.diagrams[which_dia].trains[d][j]
+                        for(let train of diagram.railway.diagrams[which_dia].trains[d]) {
                             let time;
                             if(train.timetable._data[via_stations[currentIndex]]) {
                                 if(train.timetable._data[via_stations[currentIndex]].departure || train.timetable._data[via_stations[currentIndex]].arrival) {
