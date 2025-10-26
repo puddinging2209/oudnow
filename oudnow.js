@@ -1171,7 +1171,7 @@ function set_stations (diagram) {
                 type_info.textContent += "(" + diagram.railway.trainTypes[j].name + ") "
             }
         }
-        type_info.style.top = `${150 * (i) + 50}px`
+        type_info.style.top = `${150 * i + 50}px`
         container.appendChild(type_info)
 
         const station = document.getElementById(`sta-${i}`)
@@ -1262,7 +1262,6 @@ form.myfile.addEventListener( "change", function(e) {
             diagram_text = utf8Text || sjisText;
         }
 
-        // ここから既存の処理を続ける（既存コードの reader.load 内の処理をそのまま置いてください）
         const parser = new DiagramParser();
         parser
         .parse(diagram_text)
@@ -1300,8 +1299,8 @@ document.getElementById("reload_button").addEventListener("click", function (eve
     set_train_position(parsed_diagram)
 })
 
-const reload_switch = document.getElementById("auto_reload")
-reload_switch.addEventListener("change", function (event) {
+function change_timer () {
+    clearInterval(reload_loop)
     loop_cycle = Number(document.getElementById("reload_cycle").value)
     if(loop_cycle) {
         if(reload_switch.checked) {
@@ -1314,14 +1313,19 @@ reload_switch.addEventListener("change", function (event) {
             }, loop_cycle * 1000);
             loop = true
         } else {
-            clearInterval(reload_loop)
             loop = false
         }
     } else {
         reload_switch.checked = false
         alert("値を入力してください")
     }
-})
+}
+
+const reload_switch = document.getElementById("auto_reload")
+reload_switch.addEventListener("change", change_timer)
+
+const reload_cycle_input = document.getElementById("reload_cycle")
+reload_cycle_input.addEventListener("change", change_timer)
 
 const option_button = document.getElementById("option_button")
 const option_dialog = document.getElementById("options")
@@ -1362,12 +1366,11 @@ option_dialog.addEventListener('click', (event) => {
         }
 
         const inputspeed = document.getElementById("speed_rate").value
-        if (inputspeed) {
+        if (inputspeed != 1) {
             speedrate = inputspeed
-        } else {
-            speedrate = 1
-            document.getElementById("speed_rate").value = 1
-            alert("値を入力してください")
+            loop = true
+            hijacksecond = true
+            document.getElementById("hijacksecond").checked = true
         }
 
         linecolor = document.getElementById("linecolor").value
