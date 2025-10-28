@@ -997,7 +997,7 @@ function set_train_position (diagram) {
                     if(first_depart) {
                         train_down_wrapper.style.left = "calc(60vw - 50px)"
                     } else {
-                        train_down_wrapper.style.left = `calc(${60 + waitcount * 7}vw - 50px)`
+                        train_down_wrapper.style.left = `calc(${60 + waitcount * 14}vw - 50px)`
                     }
 
                     container.appendChild(train_down_wrapper)
@@ -1062,7 +1062,7 @@ function set_train_position (diagram) {
                     if(first_depart) {
                         train_up_wrapper.style.left = `calc(40vw - ${text_width}px)`
                     } else {
-                        train_up_wrapper.style.left = `calc(${40 - waitcount * 7}vw - ${text_width}px)`
+                        train_up_wrapper.style.left = `calc(${40 - waitcount * 14}vw - ${text_width}px)`
                     }
 
                     const train_up = document.createElement("div")
