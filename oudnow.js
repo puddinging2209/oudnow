@@ -840,18 +840,30 @@ function set_train_position (diagram) {
             let via_stations = []
             let arrivals = []
             let departures = []
+            let sectors = []
+
+            let latest_dep = null
 
             for(let j = timetable.firstStationIndex; j <= timetable.terminalStationIndex; j++) {
                 if(timetable._data[j]) {
                     via_stations.push(j)
-                    if (timetable._data[j].arrival !== null) {
+                    if (timetable._data[j].arrival != null) {
                         time_list.push(timetable._data[j].arrival)
                     }
-                    if (timetable._data[j].departure !== null) {
+                    if (timetable._data[j].departure != null) {
                         time_list.push(timetable._data[j].departure)
                     }
                     arrivals.push(timetable._data[j].arrival)
                     departures.push(timetable._data[j].departure)
+                    if (timetable._data[j].arrival || timetable._data[j].departure) {
+                        sectors.push({
+                            from: sectors.at(-1)?.to ?? null,
+                            to: j, 
+                            dep: latest_dep, 
+                            arr: timetable._data[j].arrival ?? timetable._data[j].departure
+                        })
+                        latest_dep = timetable._data[j].departure
+                    }
                 }
             }
 
@@ -882,6 +894,7 @@ function set_train_position (diagram) {
             time_list.sort((a, b) => a - b)
 
             let currentIndex;
+            let currentsector;
             let pass_count = 0
             let stopping;
             for(let j = 0; j < time_list.length; j++) {
@@ -903,11 +916,9 @@ function set_train_position (diagram) {
                     departures.includes(time_list[j])
                 ) {
                     currentIndex = departures.indexOf(time_list[j])
-                    if (arrivals.indexOf(time_list[j + 1]) !== -1) {
-                        pass_count = arrivals.indexOf(time_list[j + 1]) - currentIndex
-                    } else {
-                        pass_count = departures.indexOf(time_list[j + 1]) - currentIndex
-                    }
+                    currentsector = sectors.find((sec) => (sec.dep == time_list[j] && sec.arr == time_list[j + 1]))
+                    nowtrain[i].currentSector = currentsector
+                    pass_count = currentsector.to - currentsector.from
 
                     stopping = false
                     break;
@@ -920,20 +931,15 @@ function set_train_position (diagram) {
             if (currentIndex !== -1) {
                 switch (stopping) {
                     case false:
-                        var depTime = timetable._data[via_stations[currentIndex]].departure;
                         const deptype = timetable._data[via_stations[currentIndex]].stopType
-                        var arrTime = timetable._data[via_stations[currentIndex + pass_count]].arrival ?? timetable._data[via_stations[currentIndex + pass_count]].departure
-                        const arrtype = timetable._data[via_stations[currentIndex + pass_count]].stopType
+                        const arrtype = timetable._data[via_stations[currentIndex] + pass_count].stopType
 
-                        var elapsed = nowsecond - depTime;
-                        var total = arrTime - depTime;
+                        var elapsed = nowsecond - currentsector.dep;
+                        var total = currentsector.arr - currentsector.dep;
 
                         var ratio = moving_curve(elapsed / total, `${deptype}-${arrtype}`)
 
-                        currentIndex = via_stations[currentIndex + Math.floor(ratio * pass_count)]
-                        ratio = ratio * pass_count - Math.floor(ratio * pass_count)
-
-                        topPx = (currentIndex + ratio) * 150
+                        topPx = (currentsector.from + ratio * pass_count) * 150
                     break;
 
                     case true:
@@ -955,7 +961,7 @@ function set_train_position (diagram) {
                                         first_depart = false
                                         waitcount++
                                     }
-                                } else if(train.timetable._data[via_stations[currentIndex]].stopType === 2) {
+                                } else if (train.timetable._data[via_stations[currentIndex]].stopType === 2) {
                                     let start_passing = train.timetable.firstStationIndex
                                     let end_passing = train.timetable.terminalStationIndex
                                     for (let k = via_stations[currentIndex]; k >= train.timetable.firstStationIndex; k--) {
